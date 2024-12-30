@@ -2,6 +2,11 @@ import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
 
+import { Providers } from "../providers";
+
+import { AppBar } from "@pay/ui/blocks"
+
+
 const generalSans = localFont({
   src: "./fonts/general-sans/GeneralSans.woff2",
   variable: "--font-general-sans",
@@ -23,9 +28,12 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${generalSans.variable} ${jetbrainsMono.variable}`}>
-        {children}
-      </body>
+      <Providers>
+        <body className={`${generalSans.variable} ${jetbrainsMono.variable}`}>
+          <AppBar/>
+          {children}
+        </body>
+      </Providers>
     </html>
   );
 }

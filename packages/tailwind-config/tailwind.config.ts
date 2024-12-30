@@ -13,9 +13,18 @@ export default {
                 "sans": ["General Sans", "sans-serif"],
                 "mono": ["Jetbrains mono", "monospace"]
             },
+            keyframes: {
+                "caret-blink": {
+                    "0%,70%,100%": { opacity: "1" },
+                    "20%,50%": { opacity: "0" },
+                },
+            },
+            animation: {
+                "caret-blink": "caret-blink 1.25s ease-out infinite",
+            },
             colors: {
                 dark: "#010101",
-				light: "#eff6ff",
+                light: "#eff6ff",
                 border: "hsl(var(--border))",
                 input: "hsl(var(--input))",
                 ring: "hsl(var(--ring))",
