@@ -1,0 +1,16 @@
+{
+	"name": "@pay/tailwind-config",
+	"version": "0.0.2",
+	"description": "Global tailwind config for @pay",
+	"private": "true",
+	"devDependencies": {
+		"tailwindcss": "^3.4.17",
+		"@pay/typescript-config": "workspace:*"
+	},
+	"dependencies": {
+		"tailwindcss-animate": "^1.0.7"
+	},
+	"exports": {
+		".": "./tailwind.config.ts"
+	}
+}
