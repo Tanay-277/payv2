@@ -3,17 +3,16 @@ import {
     DropdownMenu,
     DropdownMenuContent,
     DropdownMenuItem,
-    DropdownMenuLabel,
     DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from "../dropdown-menu.js"
 import { Switch } from "../switch.js"
 import { useState } from "react";
 
-export default function UserBtn() {
+export default function UserBtn({LogoutBtn}:any) {
 
     const user = {
-        name: "one"
+        name: "Qu"
     }
 
     const handleDialog = () => {
@@ -28,8 +27,8 @@ export default function UserBtn() {
 
     return (
         <DropdownMenu>
-            <DropdownMenuTrigger className="border-muted border-[0.1px] py-1 px-3 rounded-lg">{user?.name[0]}</DropdownMenuTrigger>
-            <DropdownMenuContent>
+            <DropdownMenuTrigger className="border-muted border-[0.1px] px-3 py-1 rounded-lg">{user?.name[0]}</DropdownMenuTrigger>
+            <DropdownMenuContent className="w-48">
                 <DropdownMenuItem onClick={handleDialog}>Profile</DropdownMenuItem>
                 <DropdownMenuItem>Transactions</DropdownMenuItem>
                 <DropdownMenuSeparator />
@@ -38,9 +37,8 @@ export default function UserBtn() {
                     <Switch checked={theme === "dark"} onCheckedChange={handleThemeChange} />
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem className="focus:bg-transparent">
-                    {/* <LogoutBtn /> */}
-                    logout
+                <DropdownMenuItem className="focus:bg-transparent p-1">
+                    <LogoutBtn />
                 </DropdownMenuItem>
             </DropdownMenuContent>
         </DropdownMenu>

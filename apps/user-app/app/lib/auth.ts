@@ -3,10 +3,11 @@ import CredentialsProvider from "next-auth/providers/credentials";
 import bcrypt from "bcrypt";
 import { NextAuthOptions } from "next-auth";
 
+
 export const authOptions: NextAuthOptions = {
-    pages:{
-        signIn:"/auth/sign-in",
-        newUser:"/auth/sign-up"
+    pages: {
+        signIn: "/auth/sign-in",
+        newUser: "/auth/sign-up"
     },
     providers: [
         CredentialsProvider({
@@ -14,7 +15,7 @@ export const authOptions: NextAuthOptions = {
             credentials: {
                 phone: {
                     label: "Phone number",
-                    type: "text",
+                    type: "number",
                     placeholder: "1231231231",
                     required: true,
                 },
@@ -23,38 +24,28 @@ export const authOptions: NextAuthOptions = {
             async authorize(credentials) {
                 if (!credentials) return null;
 
-                const { phone, password } = credentials;
-                const existingUser = await db.user.findFirst({
-                    where: { number: phone },
-                });
-
-                if (existingUser) {
-                    const isValidPassword = await bcrypt.compare(
-                        password,
-                        existingUser.password
-                    );
-                    if (isValidPassword) {
-                        return {
-                            id: existingUser.id.toString(),
-                            name: existingUser.name,
-                            email: existingUser.number,
-                        };
-                    }
-                    return null;
-                }
-
-                const hashedPassword = await bcrypt.hash(password, 10);
                 try {
-                    const newUser = await db.user.create({
-                        data: { number: phone, password: hashedPassword, name: phone },
+                    const { phone, password } = credentials;
+
+                    const existingUser = await db.user.findFirst({
+                        where: {
+                            number: phone,
+                        },
                     });
+
+                    if (!existingUser) return null;
+
+                    const isPasswordValid = await bcrypt.compare(password, existingUser.password);
+                    if (!isPasswordValid) return null;
+
                     return {
-                        id: newUser.id.toString(),
-                        name: newUser.name,
-                        email: newUser.number,
+                        id: existingUser.id.toString(),
+                        name: existingUser.name,
+                        email: existingUser.number,
                     };
+
                 } catch (error) {
-                    console.error(error);
+                    console.error("Error during authorization", error);
                     return null;
                 }
             },
@@ -64,8 +55,7 @@ export const authOptions: NextAuthOptions = {
     callbacks: {
         async session({ token, session }) {
             if (token?.sub) {
-                //@ts-ignore
-                session.user.id = token.sub;
+                (session.user as any).id = token.sub;
             }
             return session;
         },

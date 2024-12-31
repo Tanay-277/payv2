@@ -10,8 +10,8 @@ export default {
     theme: {
         extend: {
             fontFamily: {
-                "sans": ["General Sans", "sans-serif"],
-                "mono": ["Jetbrains mono", "monospace"]
+                "sans": ["var(--font-general-sans)", "sans-serif"],
+                "mono": ["var(--font-jet-mono)", "monospace"]
             },
             keyframes: {
                 "caret-blink": {
