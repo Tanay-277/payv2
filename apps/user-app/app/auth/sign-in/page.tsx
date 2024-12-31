@@ -16,7 +16,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
 
 import { signIn } from "next-auth/react";
-import { useSearchParams } from "next/navigation";
+import { useSearchParams, useRouter } from "next/navigation";
 import Link from "next/link";
 
 const signInSchema = z.object({
@@ -25,6 +25,7 @@ const signInSchema = z.object({
 });
 
 export default function SignIn() {
+    const navigate = useRouter()
     const searchParams = useSearchParams();
     const callbackUrl = searchParams.get("callbackUrl") || "/";
 
@@ -52,8 +53,7 @@ export default function SignIn() {
             if (result?.error) {
                 setError(result.error);
             } else {
-                // Handle successful sign-in
-                window.location.href = callbackUrl;
+                navigate.replace("/")
             }
         } catch (err) {
             setError("Failed to sign in. Please try again.");
@@ -111,7 +111,7 @@ export default function SignIn() {
                         />
 
                         {error && (
-                            <div className="p-3 rounded-md bg-destructive/10 text-destructive text-sm">
+                            <div className="p-3 rounded-md bg-destructive/10 text-destructive text-sm font-medium">
                                 {error}
                             </div>
                         )}

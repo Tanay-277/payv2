@@ -10,7 +10,7 @@ interface PaymentInformation {
 const app = express();
 app.use(express.json());
 
-app.post("/bankHook", async (req, res) => {
+app.post("/bankHook", async (req: express.Request, res: express.Response): Promise<any> => {
 	const paymentInformation: PaymentInformation = {
 		token: req.body.token,
 		userId: req.body.userId,
@@ -18,39 +18,46 @@ app.post("/bankHook", async (req, res) => {
 	};
 
 	try {
-		const updatedBalance = await db.balance.update({
-			where: {
-				userId: paymentInformation.userId,
-			},
-			data: {
-				amount: {
-					increment: paymentInformation.amount,
+		const [updatedBalance, transaction] = await db.$transaction([
+			db.balance.update({
+				where: {
+					userId: paymentInformation.userId,
 				},
-			},
-		});
+				data: {
+					amount: {
+						increment: paymentInformation.amount,
+					},
+				},
+			}),
+			db.onRampTransaction.update({
+				where: {
+					id: paymentInformation.userId,
+					token: paymentInformation.token,
+				},
+				data: {
+					status: "Success",
+				},
+			}),
+		]);
 
-		const transaction = await db.onRampTransaction.update({
-			where: {
-				id: paymentInformation.userId,
-				token: paymentInformation.token,
-			},
-			data: {
-				status: "Success",
-			},
-		});
+		if (!updatedBalance || !transaction) {
+			return res.status(501).json({
+				message: "Some Error Occurred"
+			});
+		}
 
-		res.status(200).json({
+		return res.status(200).json({
 			message: "Captured",
 		});
 	} catch (error) {
 		console.error(error);
-		res.status(500).json({
+		return res.status(500).json({
 			message: "Internal Server Error",
 		});
 	}
 });
 
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
 	console.log(`Server is running on port ${PORT}`);
 });

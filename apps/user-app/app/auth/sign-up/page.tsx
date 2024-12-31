@@ -16,39 +16,43 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
 
 import Link from "next/link";
+import { signUp } from "../../lib/auth";
+import { signIn } from "next-auth/react";
 
-const signInSchema = z.object({
+const signUpSchema = z.object({
     name: z.string().min(1, "Enter your name"),
-    email: z.string().email("Enter a valid email address"),
     phone: z.string().min(1, "Enter a valid phone number"),
     password: z.string().min(1, "Invalid Password"),
 });
+
+export type signUpType = z.infer<typeof signUpSchema>
 
 export default function SignUp() {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
-    const form = useForm<z.infer<typeof signInSchema>>({
-        resolver: zodResolver(signInSchema),
+    const form = useForm<signUpType>({
+        resolver: zodResolver(signUpSchema),
         defaultValues: {
             name: "",
-            email: "",
             phone: "",
             password: "",
         },
     });
 
-    async function onSubmit(values: z.infer<typeof signInSchema>) {
+    async function onSubmit(values: signUpType) {
         setLoading(true);
         setError(null);
         try {
-            // Simulate sign-up process
-            await new Promise((resolve) => setTimeout(resolve, 2000));
-            // Handle successful sign-up
-            window.location.href = "/auth/sign-in";
+            const { success, error } = await signUp(values);
+            if (!success) {
+                setError(error || "Failed to sign up. Please try again.");
+                return;
+            }
+            signIn();
         } catch (err) {
-            setError("Failed to sign up. Please try again.");
-            console.log(err);
+            console.error("Sign up error:", err);
+            setError("An unexpected error occurred. Please try again later.");
         } finally {
             setLoading(false);
         }
@@ -68,70 +72,53 @@ export default function SignUp() {
 
                 <Form {...form}>
                     <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-                        <div className="grid grid-cols-2 gap-4">
-                            <FormField
-                                control={form.control}
-                                name="name"
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel>Name</FormLabel>
-                                        <FormControl>
-                                            <Input
-                                                type="text"
-                                                placeholder="Enter your name" {...field} />
-                                        </FormControl>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
-                            <FormField
-                                control={form.control}
-                                name="phone"
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel>Phone Number</FormLabel>
-                                        <FormControl>
-                                            <Input
-                                                type="number"
-                                                placeholder="Enter your phone number" {...field} />
-                                        </FormControl>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
-                            <FormField
-                                control={form.control}
-                                name="email"
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel>Email</FormLabel>
-                                        <FormControl>
-                                            <Input
-                                                type="email"
-                                                placeholder="Enter your email" {...field} />
-                                        </FormControl>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
-                            <FormField
-                                control={form.control}
-                                name="password"
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel>Password</FormLabel>
-                                        <FormControl>
-                                            <Input
-                                                type="password"
-                                                placeholder="Enter your password"
-                                                {...field}
-                                            />
-                                        </FormControl>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
-                        </div>
+                        <FormField
+                            control={form.control}
+                            name="name"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Name</FormLabel>
+                                    <FormControl>
+                                        <Input
+                                            type="text"
+                                            placeholder="Enter your name" {...field} />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+                        <FormField
+                            control={form.control}
+                            name="phone"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Phone Number</FormLabel>
+                                    <FormControl>
+                                        <Input
+                                            type="number"
+                                            placeholder="Enter your phone number" {...field} />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+                        <FormField
+                            control={form.control}
+                            name="password"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Password</FormLabel>
+                                    <FormControl>
+                                        <Input
+                                            type="password"
+                                            placeholder="Enter your password"
+                                            {...field}
+                                        />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
 
                         {error && (
                             <div className="p-3 rounded-md bg-destructive/10 text-destructive text-sm">
@@ -147,7 +134,7 @@ export default function SignUp() {
                         >
                             {loading ? (
                                 <>
-                                    <span className="mr-2">Signing up</span>
+                                    <span className="mr-2">signUpg up</span>
                                     <span className="animate-pulse">...</span>
                                 </>
                             ) : (

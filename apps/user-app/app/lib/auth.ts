@@ -1,8 +1,8 @@
 import db from "@pay/db/client";
 import CredentialsProvider from "next-auth/providers/credentials";
-import bcrypt from "bcrypt";
 import { NextAuthOptions } from "next-auth";
-
+import { compareItem } from "@pay/utils";
+import { SignUpType } from "../types";
 
 export const authOptions: NextAuthOptions = {
     pages: {
@@ -22,21 +22,31 @@ export const authOptions: NextAuthOptions = {
                 password: { label: "Password", type: "password", required: true },
             },
             async authorize(credentials) {
-                if (!credentials) return null;
+                if (!credentials) {
+                    throw new Error("No credentials provided");
+                }
+
+                const { phone, password } = credentials;
+
+                if (!phone || !password) {
+                    throw new Error("Phone number and password are required");
+                }
 
                 try {
-                    const { phone, password } = credentials;
-
                     const existingUser = await db.user.findFirst({
                         where: {
                             number: phone,
                         },
                     });
 
-                    if (!existingUser) return null;
+                    if (!existingUser) {
+                        throw new Error("User not found");
+                    }
 
-                    const isPasswordValid = await bcrypt.compare(password, existingUser.password);
-                    if (!isPasswordValid) return null;
+                    const isPasswordValid = await compareItem(password, existingUser.password);
+                    if (!isPasswordValid) {
+                        throw new Error("Invalid password");
+                    }
 
                     return {
                         id: existingUser.id.toString(),
@@ -44,9 +54,9 @@ export const authOptions: NextAuthOptions = {
                         email: existingUser.number,
                     };
 
-                } catch (error) {
+                } catch (error: any) {
                     console.error("Error during authorization", error);
-                    return null;
+                    throw new Error(error.message || "Authorization failed");
                 }
             },
         }),
@@ -61,3 +71,43 @@ export const authOptions: NextAuthOptions = {
         },
     },
 };
+
+export async function signUp({ name, phone, password }: SignUpType): Promise<{ success: boolean; error?: string }> {
+    try {
+        if (!name || !phone || !password) {
+            throw new Error('All fields are required');
+        }
+
+        if (phone.length < 2) {
+            throw new Error('Invalid phone number');
+        }
+
+        if (password.length < 6) {
+            throw new Error('Password must be at least 6 characters');
+        }
+
+        const response = await fetch('/api/auth/sign-up', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ name, phone, password }),
+            credentials: 'include'
+        });
+
+        if (!response.ok) {
+            const error = await response.json();
+            throw new Error(error.message || 'Signup failed');
+        }
+
+        const data = await response.json();
+        return { success: true };
+
+    } catch (error) {
+        console.error('Signup error:', error);
+        return {
+            success: false,
+            error: error instanceof Error ? error.message : 'An unexpected error occurred'
+        };
+    }
+}
