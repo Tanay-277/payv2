@@ -134,7 +134,7 @@ export default function SignUp() {
                         >
                             {loading ? (
                                 <>
-                                    <span className="mr-2">signUpg up</span>
+                                    <span className="mr-2 animate-pulse">Signing Up</span>
                                     <span className="animate-pulse">...</span>
                                 </>
                             ) : (

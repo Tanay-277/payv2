@@ -124,7 +124,7 @@ export default function SignIn() {
                         >
                             {loading ? (
                                 <>
-                                    <span className="mr-2">Signing in</span>
+                                    <span className="mr-2 animate-pulse">Signing in</span>
                                     <span className="animate-pulse">...</span>
                                 </>
                             ) : (

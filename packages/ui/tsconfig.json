@@ -7,6 +7,6 @@
 			"@/*": ["./*"]
 		}
 	},
-	"include": ["src"],
+	"include": ["src", "../../apps/user-app/app/components/UserBtn.tsx"],
 	"exclude": ["node_modules", "dist"]
 }

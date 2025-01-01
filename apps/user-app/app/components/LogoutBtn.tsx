@@ -7,7 +7,7 @@ import { cn } from "@pay/utils"
 export default function LogoutBtn({ variant, size, className }: ButtonProps) {
     return (
         <Button asChild onClick={() => signOut()} variant={variant} size={size}>
-            <Link href="/sign-in" className={cn("w-full", className)}>Logout</Link>
+            <Link href="/auth/sign-in" className={cn("w-full", className)}>Logout</Link>
         </Button>
     );
 }
