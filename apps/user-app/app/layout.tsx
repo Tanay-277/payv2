@@ -30,7 +30,7 @@ export default function RootLayout({
     return (
         <html lang="en">
             <Providers>
-                <body className={`${generalSans.variable} ${jetbrainsMono.variable}`}>
+                <body className={`${generalSans.variable} ${jetbrainsMono.variable} grid-rows-2 sm:overflow-hidden min-h-dvh w-full`}>
                     <AppBar />
                     {children}
                 </body>

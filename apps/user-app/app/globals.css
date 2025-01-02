@@ -5,13 +5,17 @@
 @tailwind utilities;
 
 * {
-	margin: 0;	
+	margin: 0;
 	padding: 0;
 	box-sizing: border-box;
 }
 
 html {
 	scroll-behavior: smooth;
+}
+
+.scroll-none::-webkit-scrollbar{
+	width: 1px
 }
 
 @layer base {
@@ -71,6 +75,16 @@ html {
 		--chart-3: 30 80% 55%;
 		--chart-4: 280 65% 60%;
 		--chart-5: 340 75% 55%;
+		--eerie-black: hsla(210, 6%, 13%, 1);
+		--jet: hsla(48, 5%, 19%, 1);
+		--black: hsla(120, 11%, 2%, 1);
+		--black-2: hsla(0, 0%, 0%, 1);
+		--black-3: hsla(225, 20%, 4%, 1);
+		--night: hsla(210, 7%, 6%, 1);
+		--rich-black: hsla(214, 18%, 8%, 1);
+		--paynes-gray: hsla(217, 9%, 44%, 1);
+		--french-gray: hsla(218, 8%, 74%, 1);
+		--rich-black-2: hsla(215, 44%, 10%, 1);
 	}
 }
 
