@@ -67,11 +67,11 @@ function NavBarItem({
             <NavbarItem
                 ref={ref}
                 className={cn(
-                    "relative shadow-none z-10 text-base w-full bg-transparent text-foreground transition-all duration-300 hover:bg-foreground/5",
+                    "relative shadow-none z-10 md:text-sm lg:text-base w-full bg-transparent text-foreground transition-all duration-300 hover:bg-foreground/5",
                     isActive && "text-background bg-foreground"
                 )}
             >
-                <NavbarItemIcon>
+                <NavbarItemIcon className="hidden md:block">
                     <item.Icon />
                 </NavbarItemIcon>
                 {item.name}
@@ -95,7 +95,7 @@ export default function AppBar() {
     }
 
     return (
-        <Navbar>
+        <Navbar className="bg-background/30 backdrop-blur-xl sticky top-0 left-0">
             <NavbarLeft className="text-xl font-semibold">Pay</NavbarLeft>
             <NavbarMid className="border border-border rounded-full p-1 grid-cols-4 grid gap-1">
                 {NavBarItems.map((item) => (

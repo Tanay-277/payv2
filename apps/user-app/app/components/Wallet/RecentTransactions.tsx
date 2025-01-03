@@ -96,7 +96,7 @@ const RecentTransaction = memo(({ className }: RecentTransactionProps) => {
 							<Search />
 						</Button>
 						<Select>
-							<SelectTrigger className="w-fit rounded-full bg-primary-foreground text-foreground hover:bg-primary-foreground/50">
+							<SelectTrigger className="w-fit rounded-full bg-primary-foreground text-foreground hover:bg-primary-foreground/50 ease-linear transition-all duration-300">
 								<SelectValue placeholder="sort by" />
 							</SelectTrigger>
 							<SelectContent>
@@ -180,18 +180,18 @@ interface StatusBadgeProps {
 const STATUS_CONFIGS = {
 	success: {
 		label: "Success",
-		icon: <CircleCheck />,
-		className: "bg-green-100 text-green-800 hover:bg-green-200",
+		icon: <CircleCheck/>,
+		className: "bg-green-200 text-green-800 hover:bg-green-300",
 	},
 	pending: {
 		label: "Pending",
-		icon: <CircleAlert />,
-		className: "bg-yellow-200 text-yellow-800 hover:bg-yellow-200",
+		icon: <CircleAlert/>,
+		className: "bg-yellow-200 text-yellow-800 hover:bg-yellow-300",
 	},
 	failed: {
 		label: "Failed",
-		icon: <CircleX />,
-		className: "bg-red-100 text-red-800 hover:bg-red-200",
+		icon: <CircleX/>,
+		className: "bg-red-200 text-red-800 hover:bg-red-300",
 	},
 } as const;
 

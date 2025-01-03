@@ -52,7 +52,7 @@ const NavbarMid = forwardRef<HTMLDivElement, NavbarSectionProps>(
                 <div
                     ref={ref}
                     className={cn(
-                        "fixed bottom-0 left-0 w-full flex items-center justify-evenly px-8 py-4 border-t border-border",
+                        "fixed bottom-0 left-0 w-full flex items-center justify-evenly px-8 py-4 border-t border-border bg-red-500",
                         className
                     )}
                     {...props}

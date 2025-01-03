@@ -38,7 +38,7 @@ export default function UserBtn() {
                     <AvatarFallback>{user?.name?.[0] ?? "X"}</AvatarFallback>
                 </Avatar>
             </DropdownMenuTrigger>
-            <DropdownMenuContent className="w-48">
+            <DropdownMenuContent className="w-48 bg-background/10 backdrop-blur-xl">
                 <DropdownMenuItem onClick={handleDialog}>Profile</DropdownMenuItem>
                 <DropdownMenuItem>Transactions</DropdownMenuItem>
                 <DropdownMenuSeparator />
@@ -48,7 +48,7 @@ export default function UserBtn() {
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem className="focus:bg-transparent p-1">
-                    <LogoutBtn />
+                    <LogoutBtn/>
                 </DropdownMenuItem>
             </DropdownMenuContent>
         </DropdownMenu>

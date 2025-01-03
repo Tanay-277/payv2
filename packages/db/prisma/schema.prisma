@@ -8,13 +8,17 @@ datasource db {
 }
 
 model User {
-  id                String              @id @default(uuid())
-  name              String
-  email             String?             @unique
-  number            String              @unique
-  password          String
-  Balance           Balance?
-  OnRampTransaction OnRampTransaction[]
+  id                   String              @id @default(uuid())
+  name                 String
+  email                String?             @unique
+  number               String              @unique
+  password             String
+  Balance              Balance?
+  OnRampTransaction    OnRampTransaction[]
+  sentTransactions     P2PTransaction[]    @relation("SentTransactions")
+  receivedTransactions P2PTransaction[]    @relation("ReceivedTransactions")
+  @@index([email])
+  @@index([number])
 }
 
 model Merchant {
@@ -22,6 +26,7 @@ model Merchant {
   email     String   @unique
   name      String
   auth_type AuthType
+  @@index([email])
 }
 
 model Balance {
@@ -30,6 +35,18 @@ model Balance {
   amount Int
   locked Int
   user   User   @relation(fields: [userId], references: [id])
+}
+
+model P2PTransaction {
+  id         String   @id @default(uuid())
+  senderId   String
+  receiverId String
+  amount     Int
+  timestamp  DateTime @default(now())
+  sender     User     @relation("SentTransactions", fields: [senderId], references: [id])
+  receiver   User     @relation("ReceivedTransactions", fields: [receiverId], references: [id])
+  @@index([senderId])
+  @@index([receiverId])
 }
 
 model OnRampTransaction {
@@ -41,6 +58,7 @@ model OnRampTransaction {
   userId    String
   user      User         @relation(fields: [userId], references: [id])
   status    OnRampStatus
+  @@index([userId])
 }
 
 enum AuthType {
@@ -51,5 +69,5 @@ enum AuthType {
 enum OnRampStatus {
   Success
   Failure
-  Processing
+  Pending
 }
