@@ -1,11 +1,11 @@
 import express, { Application, Request, Response, NextFunction } from "express";
+
 import cors from "cors";
 import dotenv from "dotenv";
-import userRouter from "./routes/user";
 import helmet from "helmet";
 import cookieParser from "cookie-parser";
-import { validateToken } from "./middlewares/token";
-import transactions from "./routes/transactions";
+
+import { userRouter,transactions,balanceRouter } from "./routes";
 
 dotenv.config();
 
@@ -28,7 +28,8 @@ app.get("/", async (_, res: Response): Promise<any> => {
 // });
 
 app.use("/api/v2/user", userRouter);
-app.use("/api/v2/transaction",transactions)
+app.use("/api/v2/transaction", transactions)
+app.use("/api/v2/balance", balanceRouter)
 
 app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
     console.error(err.stack);

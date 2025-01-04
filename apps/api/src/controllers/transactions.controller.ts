@@ -1,7 +1,8 @@
-import { Request, Response } from "express";
-import { transactionIdSchema, transferSchema } from "../validations";
-import { STATUS } from "../types";
 import db from "@pay/db/client";
+import { Request, Response } from "express";
+
+import { STATUS } from "../types";
+import { transactionIdSchema, transferSchema } from "../validations";
 
 async function getTransaction(req: Request, res: Response): Promise<any> {
 	try {
@@ -68,51 +69,54 @@ async function transfer(req: Request, res: Response): Promise<any> {
 				.json({ msg: "Recipient user not found" });
 		}
 
-		await db.$transaction(async (tx) => {
-			transaction = await tx.p2PTransaction.create({
-				data: {
-					senderId: from,
-					receiverId: to,
-					amount: amount,
-					status: "Pending",
-				},
-			});
-
-			const sender = await tx.balance.update({
-				data: {
-					amount: {
-						decrement: amount,
+		await db.$transaction(
+			async (tx) => {
+				transaction = await tx.p2PTransaction.create({
+					data: {
+						senderId: from,
+						receiverId: to,
+						amount: amount,
+						status: "Pending",
 					},
-				},
-				where: {
-					userId: from,
-				},
-			});
+				});
 
-			if (sender.amount < 0) {
-				throw new Error("User doesn't have enough balance to transfer");
-			}
-
-			await tx.balance.update({
-				data: {
-					amount: {
-						increment: amount,
+				const sender = await tx.balance.update({
+					data: {
+						amount: {
+							decrement: amount,
+						},
 					},
-				},
-				where: {
-					userId: to,
-				},
-			});
+					where: {
+						userId: from,
+					},
+				});
 
-			transaction = await tx.p2PTransaction.update({
-				data: {
-					status: "Success",
-				},
-				where: {
-					id: transaction.id,
-				},
-			});
-		});
+				if (sender.amount < 0) {
+					throw new Error("User doesn't have enough balance to transfer");
+				}
+
+				await tx.balance.update({
+					data: {
+						amount: {
+							increment: amount,
+						},
+					},
+					where: {
+						userId: to,
+					},
+				});
+
+				transaction = await tx.p2PTransaction.update({
+					data: {
+						status: "Success",
+					},
+					where: {
+						id: transaction.id,
+					},
+				});
+			},
+			{ isolationLevel: "Serializable" }
+		);
 
 		return res
 			.status(STATUS.SUCCESS)

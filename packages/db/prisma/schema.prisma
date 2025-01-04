@@ -62,7 +62,7 @@ model OnRampTransaction {
   startTime DateTime
   userId    String
   user      User              @relation(fields: [userId], references: [id])
-  status    TransactionStatus 
+  status    TransactionStatus
 
   @@index([userId])
 }

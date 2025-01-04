@@ -15,12 +15,16 @@ async function getBalance(req: Request, res: Response): Promise<any> {
 
 		const id = payload.data;
 
-		const balance = await db.balance.findFirst({
+		const balance = await db.user.findFirst({
 			where: {
 				id: id,
 			},
 			include: {
-				user: true,
+				Balance: {
+					select: {
+						amount: true
+					}
+				}
 			},
 		});
 
