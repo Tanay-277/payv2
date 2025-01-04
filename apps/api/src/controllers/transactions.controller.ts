@@ -1,7 +1,41 @@
 import { Request, Response } from "express";
-import { transferSchema } from "../validations/transactionValidation";
+import { transactionIdSchema, transferSchema } from "../validations";
 import { STATUS } from "../types";
 import db from "@pay/db/client";
+
+async function getTransaction(req: Request, res: Response): Promise<any> {
+	try {
+		const payload = transactionIdSchema.safeParse(req.params.id);
+		if (!payload.success)
+			return res
+				.status(STATUS.BAD_REQUEST)
+				.json({ msg: "Invalid Id", error: payload.error });
+
+		const id = payload.data;
+
+		const transaction = await db.p2PTransaction.findUnique({
+			where: { id },
+			include: {
+				sender: true,
+				receiver: true,
+			},
+		});
+
+		if (!transaction) {
+			return res
+				.status(STATUS.NOT_FOUND)
+				.json({ msg: "Transaction not found" });
+		}
+
+		return res
+			.status(STATUS.SUCCESS)
+			.json({ msg: "Transaction retrieved successfully", transaction });
+	} catch (error) {
+		return res
+			.status(STATUS.INTERNAL_SERVER_ERROR)
+			.json({ msg: "Internal Server Error", error });
+	}
+}
 
 async function transfer(req: Request, res: Response): Promise<any> {
 	let transaction;
@@ -85,7 +119,7 @@ async function transfer(req: Request, res: Response): Promise<any> {
 			.json({ msg: "Transfer successful", transaction: transaction });
 	} catch (err: any) {
 		console.error("Error during transfer:", err);
-		const payload = transferSchema.safeParse(req.body)
+		const payload = transferSchema.safeParse(req.body);
 		if (payload.success) {
 			await db.p2PTransaction.create({
 				data: {
@@ -93,7 +127,7 @@ async function transfer(req: Request, res: Response): Promise<any> {
 					receiverId: payload.data.to,
 					amount: payload.data.amount,
 					status: "Failure",
-				}
+				},
 			});
 		}
 
@@ -109,4 +143,4 @@ async function transfer(req: Request, res: Response): Promise<any> {
 	}
 }
 
-export { transfer };
+export { transfer, getTransaction };
