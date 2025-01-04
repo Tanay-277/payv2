@@ -7,12 +7,12 @@
 	},
 	"devDependencies": {
 		"@pay/typescript-config": "workspace:*",
+		"@pay/utils": "workspace:*",
 		"@types/node": "18.11.9",
 		"prisma": "^6.1.0",
 		"ts-node": "^10.9.2",
 		"tsx": "^4.19.2",
-		"typescript": "5.5.4",
-		"@pay/utils": "workspace:*"
+		"typescript": "5.5.4"
 	},
 	"dependencies": {
 		"@prisma/client": "6.1.0"

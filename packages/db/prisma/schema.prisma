@@ -1,5 +1,6 @@
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
+  previewFeatures = ["omitApi"]
 }
 
 datasource db {
@@ -17,6 +18,7 @@ model User {
   OnRampTransaction    OnRampTransaction[]
   sentTransactions     P2PTransaction[]    @relation("SentTransactions")
   receivedTransactions P2PTransaction[]    @relation("ReceivedTransactions")
+
   @@index([email])
   @@index([number])
 }
@@ -26,6 +28,7 @@ model Merchant {
   email     String   @unique
   name      String
   auth_type AuthType
+
   @@index([email])
 }
 
@@ -38,26 +41,29 @@ model Balance {
 }
 
 model P2PTransaction {
-  id         String   @id @default(uuid())
+  id         String            @id @default(uuid())
   senderId   String
   receiverId String
   amount     Int
-  timestamp  DateTime @default(now())
-  sender     User     @relation("SentTransactions", fields: [senderId], references: [id])
-  receiver   User     @relation("ReceivedTransactions", fields: [receiverId], references: [id])
+  timestamp  DateTime          @default(now())
+  sender     User              @relation("SentTransactions", fields: [senderId], references: [id])
+  receiver   User              @relation("ReceivedTransactions", fields: [receiverId], references: [id])
+  status     TransactionStatus
+
   @@index([senderId])
   @@index([receiverId])
 }
 
 model OnRampTransaction {
-  id        String       @id @default(uuid())
+  id        String            @id @default(uuid())
   token     String
   provider  String
   amount    Int
   startTime DateTime
   userId    String
-  user      User         @relation(fields: [userId], references: [id])
-  status    OnRampStatus
+  user      User              @relation(fields: [userId], references: [id])
+  status    TransactionStatus 
+
   @@index([userId])
 }
 
@@ -66,7 +72,7 @@ enum AuthType {
   Github
 }
 
-enum OnRampStatus {
+enum TransactionStatus {
   Success
   Failure
   Pending

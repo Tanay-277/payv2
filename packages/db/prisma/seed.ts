@@ -25,6 +25,12 @@ async function main() {
                 create: {
                     ...user,
                     password: hashedPassword,
+                    Balance: {
+                        create: {
+                            amount: (i + 1) * 1000,
+                            locked: 0,
+                        }
+                    },
                     OnRampTransaction: {
                         create: {
                             startTime: new Date(),
